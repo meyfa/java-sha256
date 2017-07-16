@@ -1,5 +1,9 @@
 package de.jangobrick.sha256;
 
+import java.nio.charset.StandardCharsets;
+
+import javax.xml.bind.DatatypeConverter;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -9,6 +13,54 @@ import static org.junit.Assert.assertTrue;
 
 public class Sha256Test
 {
+    // HASHING - hash(byte[])
+
+    @Test
+    public void testHashEmpty()
+    {
+        byte[] b = {};
+        byte[] expected = DatatypeConverter.parseHexBinary(
+                "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+
+        assertArrayEquals(expected, Sha256.hash(b));
+    }
+
+    @Test
+    public void testHashRegular()
+    {
+        byte[] b = "Hello world!".getBytes(StandardCharsets.US_ASCII);
+        byte[] expected = DatatypeConverter.parseHexBinary(
+                "c0535e4be2b79ffd93291305436bf889314e4a3faec05ecffcbb7df31ad9e51a");
+
+        assertArrayEquals(expected, Sha256.hash(b));
+    }
+
+    @Test
+    public void testHashLong()
+    {
+        byte[] b = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+                + "Proin pulvinar turpis purus, sit amet dapibus magna commodo "
+                + "quis metus.").getBytes(StandardCharsets.US_ASCII);
+        byte[] expected = DatatypeConverter.parseHexBinary(
+                "60497604d2f6b4df42cea5efb8956f587f81a4ad66fa1b65d9e085224d255036");
+
+        assertArrayEquals(expected, Sha256.hash(b));
+    }
+
+    @Test
+    public void testHashRawBytes()
+    {
+        byte[] b = new byte[256];
+        for (int i = 0; i < b.length; ++i) {
+            b[i] = (byte) i;
+        }
+
+        byte[] expected = DatatypeConverter.parseHexBinary(
+                "40aff2e9d2d8922e47afd4648e6967497158785fbd1da870e7110266bf944880");
+
+        assertArrayEquals(expected, Sha256.hash(b));
+    }
+
     // PADDING
 
     @Test
