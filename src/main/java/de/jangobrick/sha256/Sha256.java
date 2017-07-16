@@ -56,4 +56,38 @@ public class Sha256
 
         return buf.array();
     }
+
+    private static int ch(int x, int y, int z)
+    {
+        return (x & y) | ((~x) & z);
+    }
+
+    private static int maj(int x, int y, int z)
+    {
+        return (x & y) | (x & z) | (y & z);
+    }
+
+    private static int bigSig0(int x)
+    {
+        return Integer.rotateRight(x, 2) ^ Integer.rotateRight(x, 13)
+                ^ Integer.rotateRight(x, 22);
+    }
+
+    private static int bigSig1(int x)
+    {
+        return Integer.rotateRight(x, 6) ^ Integer.rotateRight(x, 11)
+                ^ Integer.rotateRight(x, 25);
+    }
+
+    private static int smallSig0(int x)
+    {
+        return Integer.rotateRight(x, 7) ^ Integer.rotateRight(x, 18)
+                ^ (x >>> 3);
+    }
+
+    private static int smallSig1(int x)
+    {
+        return Integer.rotateRight(x, 17) ^ Integer.rotateRight(x, 19)
+                ^ (x >>> 10);
+    }
 }
