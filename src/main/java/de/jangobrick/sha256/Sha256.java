@@ -30,4 +30,30 @@ public class Sha256
 
         return paddedMessage;
     }
+
+    public static int[] toIntArray(byte[] bytes)
+    {
+        if (bytes.length % Integer.BYTES != 0) {
+            throw new IllegalArgumentException("byte array length");
+        }
+
+        ByteBuffer buf = ByteBuffer.wrap(bytes);
+
+        int[] result = new int[bytes.length / Integer.BYTES];
+        for (int i = 0; i < result.length; ++i) {
+            result[i] = buf.getInt();
+        }
+
+        return result;
+    }
+
+    public static byte[] toByteArray(int[] words)
+    {
+        ByteBuffer buf = ByteBuffer.allocate(words.length * Integer.BYTES);
+        for (int i = 0; i < words.length; ++i) {
+            buf.putInt(words[i]);
+        }
+
+        return buf.array();
+    }
 }
