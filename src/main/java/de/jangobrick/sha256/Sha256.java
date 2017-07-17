@@ -3,6 +3,9 @@ package de.jangobrick.sha256;
 import java.nio.ByteBuffer;
 
 
+/**
+ * Offers a {@code hash(byte[])} method for hashing messages with SHA-256.
+ */
 public class Sha256
 {
     private static final int[] K = { 0x428a2f98, 0x71374491, 0xb5c0fbcf,
@@ -28,6 +31,12 @@ public class Sha256
     private static final int[] H = new int[8];
     private static final int[] TEMP = new int[8];
 
+    /**
+     * Hashes the given message with SHA-256 and returns the hash.
+     *
+     * @param message The bytes to hash.
+     * @return The hash's bytes.
+     */
     public static byte[] hash(byte[] message)
     {
         // let H = H0
@@ -69,6 +78,14 @@ public class Sha256
         return toByteArray(H);
     }
 
+    /**
+     * Internal method, no need to call. Pads the given message to have a length
+     * that is a multiple of 512 bits (64 bytes), including the addition of a
+     * 1-bit, k 0-bits, and the message length as a 64-bit integer.
+     *
+     * @param message The message to pad.
+     * @return A new array with the padded message bytes.
+     */
     public static byte[] pad(byte[] message)
     {
         final int blockBits = 512;
@@ -95,6 +112,13 @@ public class Sha256
         return paddedMessage;
     }
 
+    /**
+     * Converts the given byte array into an int array via big-endian conversion
+     * (4 bytes become 1 int).
+     *
+     * @param bytes The source array.
+     * @return The converted array.
+     */
     public static int[] toIntArray(byte[] bytes)
     {
         if (bytes.length % Integer.BYTES != 0) {
@@ -111,11 +135,18 @@ public class Sha256
         return result;
     }
 
-    public static byte[] toByteArray(int[] words)
+    /**
+     * Converts the given int array into a byte array via big-endian conversion
+     * (1 int becomes 4 bytes).
+     *
+     * @param ints The source array.
+     * @return The converted array.
+     */
+    public static byte[] toByteArray(int[] ints)
     {
-        ByteBuffer buf = ByteBuffer.allocate(words.length * Integer.BYTES);
-        for (int i = 0; i < words.length; ++i) {
-            buf.putInt(words[i]);
+        ByteBuffer buf = ByteBuffer.allocate(ints.length * Integer.BYTES);
+        for (int i = 0; i < ints.length; ++i) {
+            buf.putInt(ints[i]);
         }
 
         return buf.array();
