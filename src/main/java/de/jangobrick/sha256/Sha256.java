@@ -68,7 +68,7 @@ public class Sha256
                 TEMP[0] = t1 + t2;
             }
 
-            // let H = TEMP
+            // add values in TEMP to values in H
             for (int t = 0; t < H.length; ++t) {
                 H[t] += TEMP[t];
             }
