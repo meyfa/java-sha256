@@ -1,4 +1,4 @@
-package de.jangobrick.sha256;
+package net.meyfa.sha256;
 
 import java.nio.ByteBuffer;
 

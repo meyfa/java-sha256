@@ -3,13 +3,13 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.jangobrick.sha256</groupId>
+    <groupId>net.meyfa.sha256</groupId>
     <artifactId>sha256</artifactId>
     <packaging>jar</packaging>
     <version>0.1.0-SNAPSHOT</version>
 
     <name>sha256</name>
-    <url>https://github.com/JangoBrick/java-sha256</url>
+    <url>https://github.com/meyfa/java-sha256</url>
     <description>A SHA-256 implementation in Java.</description>
 
     <properties>
