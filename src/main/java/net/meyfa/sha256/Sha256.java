@@ -93,7 +93,7 @@ public class Sha256
 
         // new message length: original + 1-bit and padding + 8-byte length
         int newMessageLength = message.length + 1 + 8;
-        int padBytes = blockBytes - (newMessageLength % blockBytes);
+        int padBytes = (blockBytes - newMessageLength % blockBytes) % blockBytes;
         newMessageLength += padBytes;
 
         // copy message to extended array
