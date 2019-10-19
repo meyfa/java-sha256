@@ -61,6 +61,20 @@ public class Sha256Test
         assertArrayEquals(expected, Sha256.hash(b));
     }
 
+    @Test
+    public void testHash55()
+    {
+        byte[] b = new byte[55];
+        for (int i = 0; i < b.length; ++i) {
+            b[i] = (byte) 'a';
+        }
+
+        byte[] expected = DatatypeConverter.parseHexBinary(
+                "9f4390f8d30c2dd92ec9f095b65e2b9ae9b0a925a5258e241c9f1e910f734318");
+
+        assertArrayEquals(expected, Sha256.hash(b));
+    }
+
     // PADDING
 
     @Test
