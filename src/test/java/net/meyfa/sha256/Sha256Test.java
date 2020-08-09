@@ -1,11 +1,10 @@
 package net.meyfa.sha256;
 
+import at.favre.lib.bytes.Bytes;
+import org.junit.Test;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-
-import javax.xml.bind.DatatypeConverter;
-
-import org.junit.Test;
 
 import static org.junit.Assert.*;
 
@@ -15,8 +14,7 @@ public class Sha256Test {
     @Test
     public void testHashEmpty() {
         byte[] b = {};
-        byte[] expected = DatatypeConverter.parseHexBinary(
-                "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+        byte[] expected = Bytes.parseHex("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855").array();
 
         assertArrayEquals(expected, Sha256.hash(b));
     }
@@ -24,8 +22,7 @@ public class Sha256Test {
     @Test
     public void testHashRegular() {
         byte[] b = "Hello world!".getBytes(StandardCharsets.US_ASCII);
-        byte[] expected = DatatypeConverter.parseHexBinary(
-                "c0535e4be2b79ffd93291305436bf889314e4a3faec05ecffcbb7df31ad9e51a");
+        byte[] expected = Bytes.parseHex("c0535e4be2b79ffd93291305436bf889314e4a3faec05ecffcbb7df31ad9e51a").array();
 
         assertArrayEquals(expected, Sha256.hash(b));
     }
@@ -35,8 +32,7 @@ public class Sha256Test {
         byte[] b = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
                 + "Proin pulvinar turpis purus, sit amet dapibus magna commodo "
                 + "quis metus.").getBytes(StandardCharsets.US_ASCII);
-        byte[] expected = DatatypeConverter.parseHexBinary(
-                "60497604d2f6b4df42cea5efb8956f587f81a4ad66fa1b65d9e085224d255036");
+        byte[] expected = Bytes.parseHex("60497604d2f6b4df42cea5efb8956f587f81a4ad66fa1b65d9e085224d255036").array();
 
         assertArrayEquals(expected, Sha256.hash(b));
     }
@@ -48,8 +44,7 @@ public class Sha256Test {
             b[i] = (byte) i;
         }
 
-        byte[] expected = DatatypeConverter.parseHexBinary(
-                "40aff2e9d2d8922e47afd4648e6967497158785fbd1da870e7110266bf944880");
+        byte[] expected = Bytes.parseHex("40aff2e9d2d8922e47afd4648e6967497158785fbd1da870e7110266bf944880").array();
 
         assertArrayEquals(expected, Sha256.hash(b));
     }
@@ -59,8 +54,7 @@ public class Sha256Test {
         byte[] b = new byte[55];
         Arrays.fill(b, (byte) 'a');
 
-        byte[] expected = DatatypeConverter.parseHexBinary(
-                "9f4390f8d30c2dd92ec9f095b65e2b9ae9b0a925a5258e241c9f1e910f734318");
+        byte[] expected = Bytes.parseHex("9f4390f8d30c2dd92ec9f095b65e2b9ae9b0a925a5258e241c9f1e910f734318").array();
 
         assertArrayEquals(expected, Sha256.hash(b));
     }
