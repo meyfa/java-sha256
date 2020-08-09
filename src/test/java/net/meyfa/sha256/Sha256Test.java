@@ -1,12 +1,12 @@
 package net.meyfa.sha256;
 
 import at.favre.lib.bytes.Bytes;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class Sha256Test {
     // HASHING - hash(byte[])
@@ -87,7 +87,7 @@ public class Sha256Test {
         byte[] padded = Sha256.pad(b);
 
         for (int i = b.length + 1; i < padded.length - 8; ++i) {
-            assertEquals("byte " + i + " not 0", 0, padded[i]);
+            assertEquals(0, padded[i], String.format("byte %d not 0", i));
         }
     }
 
@@ -109,9 +109,9 @@ public class Sha256Test {
         assertArrayEquals(expected, Sha256.toIntArray(input));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testToIntArrayThrowsForIllegalLength() {
-        Sha256.toIntArray(new byte[] { 0, 0, 0, 1, 0 });
+        assertThrows(IllegalArgumentException.class, () -> Sha256.toIntArray(new byte[] { 0, 0, 0, 1, 0 }));
     }
 
     // BYTE ARRAY CONSTRUCTION
