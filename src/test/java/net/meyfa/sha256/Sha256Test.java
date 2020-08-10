@@ -78,72 +78,22 @@ public class Sha256Test {
 
     @Test
     public void testPaddedLengthDivisibleBy512() {
-        byte[] b = { 0, 1, 2, 3, 0 };
+        for (int length = 0; length <= 128; ++length) {
+            byte[] b = new byte[length];
 
-        byte[] padded = Sha256.pad(b);
-        int paddedLengthBits = padded.length * 8;
+            int[] padded = Sha256.pad(b);
+            int paddedLengthBits = padded.length * Integer.BYTES * 8;
 
-        assertEquals(0, paddedLengthBits % 512);
+            assertEquals(0, paddedLengthBits % 512, String.format("%d not padded to 512 bits", length));
+        }
     }
 
     @Test
     public void testPaddedMessageHas1Bit() {
         byte[] b = new byte[64];
 
-        byte[] padded = Sha256.pad(b);
+        int[] padded = Sha256.pad(b);
 
-        assertEquals((byte) 0b1000_0000, padded[b.length]);
-    }
-
-    @Test
-    public void testPaddingAllZero() {
-        byte[] b = { 1, 1, 1, 1, 1, 1, 1, };
-
-        byte[] padded = Sha256.pad(b);
-
-        for (int i = b.length + 1; i < padded.length - 8; ++i) {
-            assertEquals(0, padded[i], String.format("byte %d not 0", i));
-        }
-    }
-
-    // INT ARRAY CONSTRUCTION
-
-    @Test
-    public void testToIntArrayEmpty() {
-        byte[] input = {};
-        int[] expected = {};
-
-        assertArrayEquals(expected, Sha256.toIntArray(input));
-    }
-
-    @Test
-    public void testToIntArrayMultiple() {
-        byte[] input = { 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 3 };
-        int[] expected = { 1, 2, 3 };
-
-        assertArrayEquals(expected, Sha256.toIntArray(input));
-    }
-
-    @Test
-    public void testToIntArrayThrowsForIllegalLength() {
-        assertThrows(IllegalArgumentException.class, () -> Sha256.toIntArray(new byte[] { 0, 0, 0, 1, 0 }));
-    }
-
-    // BYTE ARRAY CONSTRUCTION
-
-    @Test
-    public void testToByteArrayEmpty() {
-        int[] input = {};
-        byte[] expected = {};
-
-        assertArrayEquals(expected, Sha256.toByteArray(input));
-    }
-
-    @Test
-    public void testToByteArrayMultiple() {
-        int[] input = { 1, 2, 3 };
-        byte[] expected = { 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 3 };
-
-        assertArrayEquals(expected, Sha256.toByteArray(input));
+        assertEquals(0b1000_0000_0000_0000_0000_0000_0000_0000, padded[b.length / Integer.BYTES]);
     }
 }

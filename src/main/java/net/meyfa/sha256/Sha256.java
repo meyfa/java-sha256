@@ -1,6 +1,7 @@
 package net.meyfa.sha256;
 
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 /**
  * Offers a {@code hash(byte[])} method for hashing messages with SHA-256.
@@ -21,6 +22,9 @@ public class Sha256 {
             0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
     };
 
+    private static final int BLOCK_BITS = 512;
+    private static final int BLOCK_BYTES = BLOCK_BITS / 8;
+
     // working arrays
     private static final int[] W = new int[64];
     private static final int[] H = new int[8];
@@ -37,7 +41,7 @@ public class Sha256 {
         System.arraycopy(H0, 0, H, 0, H0.length);
 
         // initialize all words
-        int[] words = toIntArray(pad(message));
+        int[] words = pad(message);
 
         // enumerate all blocks (each containing 16 words)
         for (int i = 0, n = words.length / 16; i < n; ++i) {
@@ -71,58 +75,40 @@ public class Sha256 {
     }
 
     /**
-     * Internal method, no need to call. Pads the given message to have a length
+     * <b>Internal method, no need to call.</b> Pads the given message to have a length
      * that is a multiple of 512 bits (64 bytes), including the addition of a
      * 1-bit, k 0-bits, and the message length as a 64-bit integer.
+     * The result is a 32-bit integer array with big-endian byte representation.
      *
      * @param message The message to pad.
      * @return A new array with the padded message bytes.
      */
-    public static byte[] pad(byte[] message) {
-        final int blockBits = 512;
-        final int blockBytes = blockBits / 8;
-
+    public static int[] pad(byte[] message) {
         // new message length: original + 1-bit and padding + 8-byte length
-        int newMessageLength = message.length + 1 + 8;
-        int padBytes = (blockBytes - newMessageLength % blockBytes) % blockBytes;
-        newMessageLength += padBytes;
+        // --> block count: whole blocks + (padding + length rounded up)
+        int finalBlockLength = message.length % BLOCK_BYTES;
+        int blockCount = message.length / BLOCK_BYTES + (finalBlockLength + 1 + 8 > BLOCK_BYTES ? 2 : 1);
 
-        // copy message to extended array
-        final byte[] paddedMessage = new byte[newMessageLength];
-        System.arraycopy(message, 0, paddedMessage, 0, message.length);
+        final IntBuffer result = IntBuffer.allocate(blockCount * (BLOCK_BYTES / Integer.BYTES));
 
-        // write 1-bit
-        paddedMessage[message.length] = (byte) 0b10000000;
-
-        // skip padBytes many bytes (they are already 0)
-
-        // write 8-byte integer describing the original message length
-        int lenPos = message.length + 1 + padBytes;
-        ByteBuffer.wrap(paddedMessage, lenPos, 8).putLong(message.length * 8);
-
-        return paddedMessage;
-    }
-
-    /**
-     * Converts the given byte array into an int array via big-endian conversion
-     * (4 bytes become 1 int).
-     *
-     * @param bytes The source array.
-     * @return The converted array.
-     */
-    public static int[] toIntArray(byte[] bytes) {
-        if (bytes.length % Integer.BYTES != 0) {
-            throw new IllegalArgumentException("byte array length");
+        // copy as much of the message as possible
+        ByteBuffer buf = ByteBuffer.wrap(message);
+        for (int i = 0, n = message.length / Integer.BYTES; i < n; ++i) {
+            result.put(buf.getInt());
         }
+        // copy the remaining bytes (less than 4) and append 1 bit (rest is zero)
+        ByteBuffer remainder = ByteBuffer.allocate(4);
+        remainder.put(buf).put((byte) 0b10000000).rewind();
+        result.put(remainder.getInt());
 
-        ByteBuffer buf = ByteBuffer.wrap(bytes);
+        // ignore however many pad bytes (implicitly calculated in the beginning)
+        result.position(result.capacity() - 2);
+        // place original message length as 64-bit integer at the end
+        long msgLength = message.length * 8L;
+        result.put((int) (msgLength >>> 32));
+        result.put((int) msgLength);
 
-        int[] result = new int[bytes.length / Integer.BYTES];
-        for (int i = 0; i < result.length; ++i) {
-            result[i] = buf.getInt();
-        }
-
-        return result;
+        return result.array();
     }
 
     /**
@@ -132,7 +118,7 @@ public class Sha256 {
      * @param ints The source array.
      * @return The converted array.
      */
-    public static byte[] toByteArray(int[] ints) {
+    private static byte[] toByteArray(int[] ints) {
         ByteBuffer buf = ByteBuffer.allocate(ints.length * Integer.BYTES);
         for (int i : ints) {
             buf.putInt(i);
