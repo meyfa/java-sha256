@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.*;
 
 public class Sha256Test {
     // HASHING - hash(byte[])
@@ -57,6 +58,20 @@ public class Sha256Test {
         byte[] expected = Bytes.parseHex("9f4390f8d30c2dd92ec9f095b65e2b9ae9b0a925a5258e241c9f1e910f734318").array();
 
         assertArrayEquals(expected, Sha256.hash(b));
+    }
+
+    @Test
+    public void testHashArrayMax() {
+        // ensure JVM has enough memory to execute this test
+        byte[] b = null;
+        try {
+            b = new byte[Integer.MAX_VALUE - 8];
+        } catch (OutOfMemoryError ignored) {
+        }
+        assumeTrue(b != null);
+
+        byte[] finalB = b;
+        assertDoesNotThrow(() -> Sha256.hash(finalB));
     }
 
     // PADDING
