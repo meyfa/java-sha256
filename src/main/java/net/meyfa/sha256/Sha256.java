@@ -25,11 +25,6 @@ public class Sha256 {
     private static final int BLOCK_BITS = 512;
     private static final int BLOCK_BYTES = BLOCK_BITS / 8;
 
-    // working arrays
-    private static final int[] W = new int[64];
-    private static final int[] H = new int[8];
-    private static final int[] TEMP = new int[8];
-
     /**
      * Hashes the given message with SHA-256 and returns the hash.
      *
@@ -37,6 +32,11 @@ public class Sha256 {
      * @return The hash's bytes.
      */
     public static byte[] hash(byte[] message) {
+        // working arrays
+        final int[] W = new int[64];
+        final int[] H = new int[8];
+        final int[] TEMP = new int[8];
+        
         // let H = H0
         System.arraycopy(H0, 0, H, 0, H0.length);
 
