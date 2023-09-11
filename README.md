@@ -1,5 +1,5 @@
 # java-sha256
 
-[![Build Status](https://travis-ci.com/meyfa/java-sha256.svg?branch=master)](https://travis-ci.com/meyfa/java-sha256)
+[![CI](https://github.com/meyfa/java-sha256/actions/workflows/main.yml/badge.svg)](https://github.com/meyfa/java-sha256/actions/workflows/main.yml)
 
 A SHA-256 implementation in Java.

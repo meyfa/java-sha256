@@ -1,6 +1,0 @@
-language: java
-jobs:
-  include:
-    - jdk: openjdk11
-    - jdk: oraclejdk8
-      dist: trusty
